@@ -1,13 +1,13 @@
 const { ref, onMounted } = window.vueCompositionApi;
-import { monaco as importMonaco } from "../../vendor/vendor.js";
+import { importMonaco } from "../../monaco/monaco.js";
 import { provideCompletionItems, provideHover } from "./monacoProviders.js";
 
 self.MonacoEnvironment = {
   getWorkerUrl: function(moduleId, label) {
     if (label === "html") {
-      return "../vendor/worker/html.js";
+      return "../monaco/html.worker.js";
     }
-    return "../vendor/worker/editor.js";
+    return "../monaco/editor.worker.js";
   }
 };
 

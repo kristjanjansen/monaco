@@ -11,8 +11,17 @@ export default [
       format: "es",
       chunkFileNames: "[name].js"
     },
+    plugins: [resolve(), commonjs(), terser()]
+  },
+  {
+    input: "./src/monaco.js",
+    output: {
+      dir: "./monaco",
+      format: "es",
+      chunkFileNames: "[name].js"
+    },
     plugins: [
-      css({ dest: "vendor/monaco.css" }),
+      css({ dest: "monaco/monaco.css" }),
       resolve(),
       commonjs(),
       terser()
@@ -21,7 +30,7 @@ export default [
   {
     input: "node_modules/monaco-editor/esm/vs/editor/editor.worker.js",
     output: {
-      file: "./vendor/worker/editor.js",
+      file: "./monaco/editor.worker.js",
       format: "umd",
       name: "editor"
     },
@@ -30,7 +39,7 @@ export default [
   {
     input: "node_modules/monaco-editor/esm/vs/language/html/html.worker.js",
     output: {
-      file: "./vendor/worker/html.js",
+      file: "./monaco/html.worker.js",
       format: "umd",
       name: "html"
     },
