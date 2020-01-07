@@ -1,3 +1,4 @@
-import * as monaco from "monaco-editor/esm/vs/editor/editor.main.js";
+const importMonaco = import("monaco-editor/esm/vs/editor/editor.main.js");
+const importMarked = import("marked");
 
-export { monaco };
+export { importMonaco, importMarked };
