@@ -1,65 +1,42 @@
-const {
-  default: compositionApi,
-  ref,
-  onMounted,
-  computed
-} = window.vueCompositionApi;
-Vue.use(compositionApi);
+const { ref, onMounted } = window.vueCompositionApi;
+import { monaco } from "../../vendor/vendor.js";
+import { provideCompletionItems, provideHover } from "./monacoProviders.js";
 
-import {
-  EditorView,
-  ViewPlugin,
-  EditorState,
-  baseKeymap,
-  indentSelection,
-  lineNumbers,
-  defaultHighlighter,
-  keymap,
-  html,
-  bracketMatching,
-  history,
-  redo,
-  undo
-} from "../../vendor/vendor.js";
+self.MonacoEnvironment = {
+  getWorkerUrl: function(moduleId, label) {
+    if (label === "html") {
+      return "../vendor/worker/html.js";
+    }
+    return "../vendor/worker/editor.js";
+  }
+};
 
-export default function useEditor(inputeditorContent = "") {
-  const editor = ref(null);
-  const editorContent = ref(inputeditorContent);
-
-  let onUpdatePlugin = ViewPlugin.create(view => {
-    return {
-      update({ state }) {
-        editorContent.value = state.toJSON().doc;
-      }
-    };
-  });
-
-  const extensions = [
-    lineNumbers(),
-    bracketMatching(),
-    defaultHighlighter,
-    html(),
-    history(),
-    keymap(baseKeymap),
-    keymap({
-      "Mod-z": undo,
-      "Mod-Shift-z": redo,
-      Tab: indentSelection
-    }),
-    onUpdatePlugin.extension
-  ];
-
-  let ev = new EditorView({
-    state: EditorState.create({ doc: editorContent.value, extensions })
-  });
-
+export const useMonaco = (defaultContent = "hello") => {
+  const editorNode = ref(null);
+  const content = ref(defaultContent);
   onMounted(() => {
-    editor.value.replaceWith(ev.dom);
+    monaco.languages.registerCompletionItemProvider("html", {
+      provideCompletionItems
+    });
+    monaco.languages.registerHoverProvider("html", { provideHover });
+    const editor = monaco.editor.create(editorNode.value, {
+      value: content.value,
+      language: "html",
+      theme: "vs-dark",
+      fontSize: "14px",
+      wordWrap: "wordWrapColumn",
+      wordWrapColumn: 65,
+      minimap: {
+        enabled: false
+      }
+    });
+    const model = editor.getModel();
+    model.updateOptions({ tabSize: 2 });
+
+    editor.onDidChangeModelContent(e => {
+      content.value = editor.getValue();
+    });
   });
 
-  const content = computed(() => {
-    return marked(editorContent.value, { breaks: true });
-  });
-
-  return { editor, content };
-}
+  return { editorNode, content };
+};
