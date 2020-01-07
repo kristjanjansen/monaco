@@ -11,8 +11,11 @@ import {
   kebabcase
 } from "https://designstem.github.io/fachwerk/fachwerk.js";
 
+for (const name in rawComponents) {
+  Vue.component(name, rawComponents[name]);
+}
+
 import { monaco } from "../vendor/vendor.js";
-import { formatMarkdownTable } from "./utils.js";
 
 self.MonacoEnvironment = {
   getWorkerUrl: function(moduleId, label) {
@@ -70,10 +73,12 @@ const tagSuggestions = range => {
   });
 };
 
+Vue.prototype.$global = new Vue({ data: { state: {} } });
+
 new Vue({
   setup() {
     const editorNode = ref(null);
-    const content = ref("<f-scene>");
+    const content = ref("<f-scene></f-scene>");
     onMounted(() => {
       monaco.languages.registerCompletionItemProvider("html", {
         provideCompletionItems: function(model, position) {
@@ -158,7 +163,7 @@ new Vue({
   template: `
   <div style="display: flex; height: 100vh;">
       <div ref="editorNode" style="flex: 1;" />
-      <div style="flex: 1;">{{ content }}</div>
+      <f-content style="flex: 1;" :content="content" />
   </div>
   `
 }).$mount("#app");
