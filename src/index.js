@@ -6,42 +6,16 @@ const {
 } = window.vueCompositionApi;
 Vue.use(compositionApi);
 
-// import {
-//   components,
-//   kebabcase
-// } from "https://designstem.github.io/fachwerk/fachwerk.js";
-
-const kebabcase = string =>
-  string.replace(/([a-zA-Z])(?=[A-Z])/g, "$1-").toLowerCase();
-
-import { components } from "./components.js";
-
-// const a = Object.entries(components).map(([name, value]) => {
-//   return {
-//     label: kebabcase(name),
-//     kind: monaco.languages.CompletionItemKind.Function,
-//     documentation: "",
-//     insertText: `<${kebabcase(name)}>`,
-//     range: "range"
-//   };
-// });
-
-//console.log(a);
+import {
+  components as rawComponents,
+  kebabcase
+} from "https://designstem.github.io/fachwerk/fachwerk.js";
 
 import { monaco } from "../vendor/vendor.js";
 import { formatMarkdownTable } from "./utils.js";
 
 self.MonacoEnvironment = {
   getWorkerUrl: function(moduleId, label) {
-    // if (label === "json") {
-    //   return "./json.worker.js";
-    // }
-    // if (label === "css") {
-    //   return "./css.worker.js";
-    // }
-    // if (label === "typescript" || label === "javascript") {
-    //   return "./ts.worker.js";
-    // }
     if (label === "html") {
       return "./vendor/worker/html.js";
     }
@@ -49,36 +23,48 @@ self.MonacoEnvironment = {
   }
 };
 
-// monaco.editor.defineTheme("theme", {
-//   base: "vs-dark",
-//   inherit: { true }
-// });
+const components = Object.entries(rawComponents).map(([key, value]) => {
+  return {
+    pascalName: key,
+    kebabName: kebabcase(key),
+    about: value.description ? value.description.trim().split(/\n/)[0] : "",
+    ...value
+  };
+});
 
-// monaco.editor.create(document.getElementById("app"), {
-//   value: ["function x() {", '\tconsole.log("Hello world!");', "}"].join("\n"),
-//   language: "html",
-//   theme: "vs-dark"
-// });
+const formatType = typename => {
+  if (!Array.isArray(typename)) {
+    typename = [typename];
+  }
+  return typename
+    .map(t =>
+      typeof t == "function" ? (t() instanceof Array ? "array" : typeof t()) : t
+    )
+    .map(t => `_${t}_`)
+    .join(", ");
+};
 
-const component = Object.entries(
-  components.FHedron3.props
-).map(([key, value]) => ({
-  name: `\`${key}\``,
-  default: `\`${value.default}\``
-}));
+const formatProps = ({ props }) =>
+  Object.entries(props)
+    .map(
+      ([key, value]) => `\`${key}="${value.default}"\` ${
+        value.type ? formatType(value.type) : ""
+      }\n
+${value.description || ""}
+  `
+    )
+    .join("\n---\n");
 
-console.log(formatMarkdownTable(component));
+const formatDocs = component =>
+  `[Documentation](https://designstem.github.io/fachwerk/docs/#${component.kebabName}) [Source](https://github.com/designstem/fachwerk/blob/master/src/components/2d/${component.pascalName}.js)`;
 
 const tagSuggestions = range => {
-  return Object.entries(components).map(([name, value]) => {
+  return components.map(c => {
     return {
-      label: kebabcase(name),
+      label: c.kebabName,
       kind: monaco.languages.CompletionItemKind.Function,
-      documentation: `[google](https://google.com)`,
-      documentation: value.description
-        ? value.description.trim().split(/\n/)[0]
-        : "",
-      insertText: `<${kebabcase(name)}>`,
+      documentation: c.about,
+      insertText: `<${c.kebabName}>`,
       range
     };
   });
@@ -87,11 +73,12 @@ const tagSuggestions = range => {
 new Vue({
   setup() {
     const editorNode = ref(null);
-    const content = ref("hello!");
+    const content = ref("<f-scene>");
     onMounted(() => {
       monaco.languages.registerCompletionItemProvider("html", {
         provideCompletionItems: function(model, position) {
           const word = model.getWordUntilPosition(position);
+          console.log(word);
           if (word.word == "f-") {
             var range = {
               startLineNumber: position.lineNumber,
@@ -119,22 +106,30 @@ new Vue({
             };
 
             if (word.word.startsWith("f-")) {
-              return {
-                range,
-                contents: [
-                  {
-                    value: `**${kebabcase(word.word)}**`
-                  },
-                  {
-                    value: formatMarkdownTable(component)
-                  },
-                  {
-                    value: `[Documentation](https://designstem.github.io/fachwer/docs/#${kebabcase(
-                      word.word
-                    )})`
-                  }
-                ]
-              };
+              const component = components.filter(
+                c => c.kebabName == word.word
+              )[0];
+
+              if (component) {
+                console.log(component);
+                return {
+                  range,
+                  contents: [
+                    {
+                      value: `**${component.kebabName}**`
+                    },
+                    {
+                      value: `${component.about}`
+                    },
+                    {
+                      value: formatDocs(component)
+                    },
+                    {
+                      value: formatProps(component)
+                    }
+                  ]
+                };
+              }
             }
           }
           return {};
@@ -145,6 +140,8 @@ new Vue({
         language: "html",
         theme: "vs-dark",
         fontSize: "14px",
+        wordWrap: "wordWrapColumn",
+        wordWrapColumn: 65,
         minimap: {
           enabled: false
         }

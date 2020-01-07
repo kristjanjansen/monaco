@@ -19,3 +19,9 @@ export const formatMarkdownTable = data => {
   );
   return [header, separator, ...content].join("\n");
 };
+
+export const pascalCase = str =>
+  str
+    .match(/[a-z]+/gi)
+    .map(word => word.charAt(0).toUpperCase() + word.substr(1).toLowerCase())
+    .join("");
