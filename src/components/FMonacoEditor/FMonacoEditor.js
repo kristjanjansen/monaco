@@ -27,7 +27,7 @@ export default {
         });
         monaco.languages.registerHoverProvider("html", { provideHover });
         const editor = monaco.editor.create(editorNode.value, {
-          value: "a",
+          value: "asasas",
           language: "html",
           theme: "vs-dark",
           fontSize: "14px",
@@ -46,6 +46,7 @@ export default {
         // );
 
         editor.onDidChangeModelContent(e => {
+          emit("input", editor.getValue());
           //editorContent.value = editor.getValue();
         });
       });

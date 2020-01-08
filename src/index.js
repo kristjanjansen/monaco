@@ -16,7 +16,7 @@ new Vue({
   setup() {
     const content = ref("haheeeaa");
     setTimeout(() => (content.value = "100asasas"), 1000);
-    watch(() => console.log(content.value));
+    //watch(() => console.log(content.value));
     return { content };
   },
   template: `
