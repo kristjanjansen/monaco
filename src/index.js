@@ -1,25 +1,27 @@
-const { default: compositionApi } = window.vueCompositionApi;
+const { default: compositionApi, ref, watch } = window.vueCompositionApi;
 Vue.use(compositionApi);
 
 import { components } from "https://designstem.github.io/fachwerk/fachwerk.js";
-import { useMonaco } from "./hooks/useMonaco.js";
+import FMonacoEditor from "./components/FMonacoEditor/FMonacoEditor.js";
 
 for (const name in components) {
   Vue.component(name, components[name]);
 }
 
+Vue.component("FMonacoEditor", FMonacoEditor);
+
 Vue.prototype.$global = new Vue({ data: { state: {} } });
 
 new Vue({
   setup() {
-    const { editorNode, content } = useMonaco(
-      "<f-scene grid>\n  <f-circle/>\n</f-scene>"
-    );
-    return { editorNode, content };
+    const content = ref("haheeeaa");
+    setTimeout(() => (content.value = "100asasas"), 1000);
+    watch(() => console.log(content.value));
+    return { content };
   },
   template: `
   <div style="display: flex; height: 100vh;">
-      <div ref="editorNode" style="flex: 1;" />
+      <f-monaco-editor v-model="content" style="flex: 1;" />
       <f-content style="flex: 1;" :content="content" />
   </div>
   `

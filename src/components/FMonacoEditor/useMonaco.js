@@ -1,6 +1,6 @@
 const { ref, onMounted } = window.vueCompositionApi;
-import { importMonaco } from "../../monaco/monaco.js";
-import { provideCompletionItems, provideHover } from "./monacoProviders.js";
+import { importMonaco } from "../../../monaco/monaco.js";
+import { provideCompletionItems, provideHover } from "./providers.js";
 
 self.MonacoEnvironment = {
   getWorkerUrl: function(moduleId, label) {
@@ -11,9 +11,10 @@ self.MonacoEnvironment = {
   }
 };
 
-export const useMonaco = (defaultContent = "") => {
+export const useMonaco = content => {
   const editorNode = ref(null);
-  const content = ref(defaultContent);
+  const editorContent = ref(content);
+
   onMounted(() => {
     importMonaco.then(monaco => {
       monaco.languages.registerCompletionItemProvider("html", {
@@ -21,7 +22,7 @@ export const useMonaco = (defaultContent = "") => {
       });
       monaco.languages.registerHoverProvider("html", { provideHover });
       const editor = monaco.editor.create(editorNode.value, {
-        value: content.value,
+        value: content,
         language: "html",
         theme: "vs-dark",
         fontSize: "14px",
@@ -34,11 +35,16 @@ export const useMonaco = (defaultContent = "") => {
       const model = editor.getModel();
       model.updateOptions({ tabSize: 2 });
 
+      // watch(
+      //   () => props.slider1,
+      //   slider1 => (slider2.value = slider1)
+      // );
+
       editor.onDidChangeModelContent(e => {
-        content.value = editor.getValue();
+        editorContent.value = editor.getValue();
       });
     });
   });
 
-  return { editorNode, content };
+  return { editorNode, editorContent };
 };
