@@ -42,7 +42,16 @@ export default {
 
         watch(
           () => props.value,
-          value => editor.setValue(value)
+          value =>
+            model.pushEditOperations(
+              [],
+              [
+                {
+                  range: model.getFullModelRange(),
+                  text: value
+                }
+              ]
+            ) //editor.setValue(value)
         );
 
         editor.onDidChangeModelContent(e => {

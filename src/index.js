@@ -1,4 +1,4 @@
-const { default: compositionApi, ref, watch } = window.vueCompositionApi;
+const { default: compositionApi, ref } = window.vueCompositionApi;
 Vue.use(compositionApi);
 
 import { components } from "https://designstem.github.io/fachwerk/fachwerk.js";
@@ -15,7 +15,6 @@ Vue.prototype.$global = new Vue({ data: { state: {} } });
 new Vue({
   setup() {
     const content = ref("<f-scene>\n  <f-circle />\n</f-scene>");
-    setTimeout(() => (content.value = "ahaa"), 1000);
     return { content };
   },
   template: `
