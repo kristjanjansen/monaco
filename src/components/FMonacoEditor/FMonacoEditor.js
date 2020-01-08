@@ -14,7 +14,7 @@ self.MonacoEnvironment = {
 //import { useMonaco } from "./useMonaco.js";
 
 export default {
-  props: { content: { default: "" } },
+  props: { value: { default: "" } },
   setup(props, { emit }) {
     //const { editorNode, editorContent } = useMonaco(props.content);
     const editorNode = ref(null);
@@ -27,7 +27,7 @@ export default {
         });
         monaco.languages.registerHoverProvider("html", { provideHover });
         const editor = monaco.editor.create(editorNode.value, {
-          value: "asasas",
+          value: "",
           language: "html",
           theme: "vs-dark",
           fontSize: "14px",
@@ -40,21 +40,18 @@ export default {
         const model = editor.getModel();
         model.updateOptions({ tabSize: 2 });
 
-        // watch(
-        //   () => props.slider1,
-        //   slider1 => (slider2.value = slider1)
-        // );
+        watch(
+          () => props.value,
+          value => editor.setValue(value)
+        );
 
         editor.onDidChangeModelContent(e => {
           emit("input", editor.getValue());
-          //editorContent.value = editor.getValue();
         });
       });
     });
 
     return { editorNode };
-    // watch(() => editorContent, () => emit("value", editorContent));
-    //return { editorNode };
   },
   template: `
     <div ref="editorNode" />
