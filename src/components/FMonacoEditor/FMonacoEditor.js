@@ -37,7 +37,7 @@ export default {
           value: "",
           language: "html",
           theme: "vs-dark",
-          fontSize: "14px",
+          fontSize: "15px",
           wordWrap: "wordWrapColumn",
           wordWrapColumn: 65,
           minimap: {

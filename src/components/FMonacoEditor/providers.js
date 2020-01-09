@@ -85,7 +85,7 @@ export const provideHover = (model, position) => {
           range,
           contents: [
             {
-              value: `**${component.kebabName}**`
+              value: `\`<${component.kebabName}>\``
             },
             {
               value: `${component.about}`

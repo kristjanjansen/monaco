@@ -49,7 +49,7 @@ new Vue({
     FMonacoEditor: () => import("./components/FMonacoEditor/FMonacoEditor.js")
   },
   setup() {
-    const { monacoEditor } = appState;
+    const monacoEditor = useStore(false, "fachwerk_editor");
 
     // We set up current editor content
 
@@ -88,16 +88,29 @@ new Vue({
     // the editor content and stored content
 
     const isSaved = computed(() => storedContent.value == content.value);
+    const isResetable = computed(() => content.value !== initalContent);
 
-    return { a, monacoEditor, content, onSave, onReset, isSaved };
+    return { a, monacoEditor, content, onSave, onReset, isSaved, isResetable };
   },
   template: `
   <div style="display: flex; height: 100vh; --paleblue: #1e1e1e">
       <div style="flex: 1; display: flex; flex-direction: column; background: var(--paleblue); color: white;">
-        <FEditorHeader />
-        <button @click="onSave">{{ isSaved ? 'saved' : 'save'}}</button>
-        <button @click="onReset">Reset</button>
-        <component :is="monacoEditor ? 'FMonacoEditor' : 'FEditor'" v-model="content" style="flex: 1;" />
+        <div style="
+          height: var(--base6);
+          padding: 0 var(--base);
+          background: var(--paleblue);
+          display: flex;
+          align-items: center;
+          justify-content: space-between;
+        ">
+          <f-toggle v-model="monacoEditor" title="Pro mode" />
+          <div>
+            <a v-if="isResetable" class="quaternary" @click="onReset" style="opacity: 0.5">Reset</a>
+            <a class="quaternary" @click="onSave">{{ isSaved ? 'Saved' : 'Save'}}</a>
+          </div>
+        </div>
+        <f-monaco-editor v-if="monacoEditor" v-model="content" style="flex: 1;" />
+        <f-editor v-if="!monacoEditor" v-model="content" style="flex: 1; padding-top: calc(var(--base) * 0.25); padding-left: calc(var(--base) * 9);" />
       </div>
       <f-content style="flex: 1;" :content="content" />
   </div>
