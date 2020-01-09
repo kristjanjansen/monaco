@@ -1,4 +1,4 @@
-const { default: compositionApi, ref } = window.vueCompositionApi;
+const { default: compositionApi, ref, computed } = window.vueCompositionApi;
 Vue.use(compositionApi);
 
 import { components } from "https://designstem.github.io/fachwerk/fachwerk.js";
@@ -50,17 +50,50 @@ new Vue({
   },
   setup() {
     const { monacoEditor } = appState;
-    const content = useStore(
-      "<f-scene>\n  <f-circle />\n</f-scene>",
-      "content"
-    );
-    return { a, monacoEditor, content };
+
+    // We set up current editor content
+
+    const initalContent = "<f-scene>\n  <f-circle />\n</f-scene>";
+    const content = ref(initalContent);
+
+    // We also set up a parallel content store for local storage
+
+    const storedContent = useStore(content.value, "fachwerk_content");
+
+    // storedContent returns either content saved in previous session
+    // or current content value
+
+    content.value = storedContent.value;
+
+    // When saving is triggered, we update the stored content with
+    // current editor content
+
+    // The reason we do not use autosave is because when stored
+    // content contains an error, it might block the whole Vue rendering
+    // and the only way to reset the content is to manually delete it
+
+    const onSave = () => {
+      storedContent.value = content.value;
+    };
+
+    // On reset we replace both content and stored content values
+    // with initial value
+
+    const onReset = () => {
+      content.value = initalContent;
+      storedContent.value = initalContent;
+    };
+
+    const isSaved = computed(() => storedContent.value == content.value);
+
+    return { a, monacoEditor, content, onSave, onReset, isSaved };
   },
   template: `
   <div style="display: flex; height: 100vh; --paleblue: #1e1e1e">
       <div style="flex: 1; display: flex; flex-direction: column; background: var(--paleblue); color: white;">
         <FEditorHeader />
-        {{ a }}
+        <button @click="onSave">{{ isSaved ? 'saved' : 'save'}}</button>
+        <button @click="onReset">Reset</button>
         <component :is="monacoEditor ? 'FMonacoEditor' : 'FEditor'" v-model="content" style="flex: 1;" />
       </div>
       <f-content style="flex: 1;" :content="content" />
