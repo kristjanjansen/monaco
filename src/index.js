@@ -17,19 +17,46 @@ Vue.component("FContentEditor3", FContentEditor3);
 
 // Experimental states
 
-import { useStore } from "./hooks/useStore.js";
+import { load, save } from "./hooks/useStore2.js";
 
-const states = useStore({}, "fachwerk_document");
+// const state = useStore2;
 
-const load = key => {
-  return states.value.hasOwnProperty(key) ? states.value[key] : 0;
-};
+// const load = key => {
+//   return state.value.hasOwnProperty(key) ? state.value[key] : 0;
+// };
 
-const save = (key, value) => {
-  states.value = { ...states.value, [key]: value };
-};
+// const save = (key, value) => {
+//   state.value = { ...state.value, [key]: value };
+//   console.log(state.value.a);
+// };
 
 Vue.mixin({ methods: { save, load } });
+
+const Slider = {
+  setup() {
+    const innerValue = ref(0);
+
+    // watch(innerValue, value => {
+    //   state.value = { ...state.value, a: value };
+    // });
+
+    // watch(state, value => {
+    //   innerValue.value = value.a;
+    // });
+    return { load, save };
+  },
+  template: `
+    <div><input
+      step="0.0001"
+      max="360"
+      type="range"
+      :value="load('a')"
+      @input="e => save('a',parseFloat(e.target.value))"
+    /> {{ load('a') }}</div>
+  `
+};
+
+Vue.component("Slider", Slider);
 
 new Vue({
   setup() {
