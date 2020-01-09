@@ -3,7 +3,7 @@ const { ref, watch, computed } = window.vueCompositionApi;
 import FSmallToggle from "./FSmallToggle.js";
 Vue.component("FSmallToggle", FSmallToggle);
 
-import { useStore } from "../state.js";
+import { useStore } from "../hooks/useStore.js";
 
 export default {
   components: {
@@ -16,7 +16,7 @@ export default {
     const editorType = useStore(false, "fachwerk_editor_type");
 
     const editorOpen = useStore(true, "fachwerk_editor_open");
-    // $global.$emit('edit')
+    // $global.$on('edit')
 
     // We set up current editor content
 

@@ -17,7 +17,7 @@ Vue.component("FContentEditor3", FContentEditor3);
 
 // Experimental states
 
-import { useStore } from "./state.js";
+import { useStore } from "./hooks/useStore.js";
 
 const states = useStore({}, "fachwerk_document");
 

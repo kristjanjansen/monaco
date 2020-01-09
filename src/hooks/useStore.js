@@ -1,8 +1,6 @@
 const { default: compositionApi, ref, computed } = window.vueCompositionApi;
 Vue.use(compositionApi);
 
-export const appState = { monacoEditor: ref(false) };
-
 export const useStore = (initialValue = null, key = null) => {
   const value = ref(initialValue);
   if (key && !window.localStorage.getItem(key)) {
