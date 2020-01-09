@@ -63,11 +63,14 @@ const FSmallToggle = {
 
 Vue.component("FSmallToggle", FSmallToggle);
 
-new Vue({
+const FContentEditor3 = {
   components: {
     FMonacoEditor: () => import("./components/FMonacoEditor/FMonacoEditor.js")
   },
-  setup() {
+  props: {
+    content: { default: "" }
+  },
+  setup(props) {
     const editorType = useStore(false, "fachwerk_editor_type");
 
     const editorOpen = useStore(true, "fachwerk_editor_open");
@@ -75,17 +78,26 @@ new Vue({
 
     // We set up current editor content
 
-    const initalContent = "<f-scene>\n  <f-circle />\n</f-scene>";
-
-    const content = ref(initalContent);
+    const editorContent = ref(props.content);
 
     // We also set up a second content store for local storage
 
-    const storedContent = useStore(content.value, "fachwerk_editor_content");
+    const storedContent = useStore(
+      editorContent.value,
+      "fachwerk_editor_content"
+    );
 
     // storedContent returns content saved in previous session, if exists
 
-    content.value = storedContent.value;
+    editorContent.value = storedContent.value;
+
+    // watch(
+    //   () => props.content,
+    //   content => {
+    //     content.value = content;
+    //     storedContent.value = content;
+    //   }
+    // );
 
     // When saving is triggered, we update the stored content with
     // current editor content
@@ -95,27 +107,27 @@ new Vue({
     // and the only way to reset the content is to manually delete it
 
     const onSave = () => {
-      storedContent.value = content.value;
+      storedContent.value = editorContent.value;
     };
 
     // On reset we replace both content and stored content values
     // with initial value
 
     const onReset = () => {
-      content.value = initalContent;
-      storedContent.value = initalContent;
+      editorContent.value = props.content;
+      storedContent.value = props.content;
     };
 
     // Checking whenever content has been saved can be done by comparing
     // the editor content and stored content
 
-    const isSaved = computed(() => storedContent.value == content.value);
-    const isResetable = computed(() => content.value !== initalContent);
+    const isSaved = computed(() => editorContent.value == storedContent.value);
+    const isResetable = computed(() => editorContent.value !== props.content);
 
     return {
       editorType,
       editorOpen,
-      content,
+      editorContent,
       onSave,
       onReset,
       isSaved,
@@ -145,10 +157,21 @@ new Vue({
             <a class="quaternary" @click="onSave">{{ isSaved ? 'Saved' : 'Save'}}</a>
           </div>
         </div>
-        <f-monaco-editor v-if="editorOpen && editorType" v-model="content" style="flex: 1;" />
-        <f-editor v-if="editorOpen && !editorType" v-model="content" style="flex: 1; padding-top: calc(var(--base) * 0.25); padding-left: calc(var(--base) * 9);" />
+        <f-monaco-editor v-if="editorOpen && editorType" v-model="editorContent" style="flex: 1;" />
+        <f-editor v-if="editorOpen && !editorType" v-model="editorContent" style="flex: 1; padding-top: calc(var(--base) * 0.25); padding-left: calc(var(--base) * 9);" />
       </div>
-      <f-content style="flex: 1;" :content="content" />
+      <f-content style="flex: 1;" :content="editorContent" />
   </div>
   `
+};
+
+Vue.component("FContentEditor3", FContentEditor3);
+
+new Vue({
+  setup() {
+    const initial = "haaa";
+    //setTimeout(() => (initial.value = "baaa"), 2000);
+    return { initial };
+  },
+  template: `<f-content-editor3 :content="initial" />`
 }).$mount("#app");
