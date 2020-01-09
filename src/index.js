@@ -11,10 +11,10 @@ for (const name in components) {
 
 //Vue.prototype.$global = new Vue();
 
-import { appState, useState } from "./state.js";
-let a = useState({ editor: false, aba: true }, "amma");
+import { appState, useStore } from "./state.js";
+let a = useStore({ editor: false, aba: true }, "amma");
 
-const states = useState({}, "states");
+const states = useStore({}, "states");
 
 const gett = key => {
   return states.value.hasOwnProperty(key) ? states.value[key] : 0;
@@ -50,7 +50,10 @@ new Vue({
   },
   setup() {
     const { monacoEditor } = appState;
-    const content = ref("<f-scene>\n  <f-circle />\n</f-scene>");
+    const content = useStore(
+      "<f-scene>\n  <f-circle />\n</f-scene>",
+      "content"
+    );
     return { a, monacoEditor, content };
   },
   template: `

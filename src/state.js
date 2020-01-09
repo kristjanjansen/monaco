@@ -3,7 +3,7 @@ Vue.use(compositionApi);
 
 export const appState = { monacoEditor: ref(false) };
 
-export const useState = (initialValue = null, key = null) => {
+export const useStore = (initialValue = null, key = null) => {
   const value = ref(initialValue);
   if (key && !window.localStorage.getItem(key)) {
     window.localStorage.setItem(key, JSON.stringify(initialValue));
