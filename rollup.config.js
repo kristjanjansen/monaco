@@ -2,6 +2,7 @@ import resolve from "rollup-plugin-node-resolve";
 import commonjs from "rollup-plugin-commonjs";
 import { terser } from "rollup-plugin-terser";
 import css from "rollup-plugin-css-porter";
+import replace from "rollup-plugin-replace";
 
 export default [
   {
@@ -11,7 +12,14 @@ export default [
       format: "es",
       chunkFileNames: "[name].js"
     },
-    plugins: [resolve(), commonjs(), terser()]
+    plugins: [
+      resolve(),
+      commonjs(),
+      terser(),
+      replace({
+        "process.env.NODE_ENV": JSON.stringify("development")
+      })
+    ]
   },
   {
     input: "./src/monaco.js",

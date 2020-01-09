@@ -1,26 +1,44 @@
-const { default: compositionApi } = window.vueCompositionApi;
+const {
+  default: compositionApi,
+  ref,
+  computed,
+  watch
+} = window.vueCompositionApi;
 Vue.use(compositionApi);
 
 import { components } from "https://designstem.github.io/fachwerk/fachwerk.js";
-import { useMonaco } from "./hooks/useMonaco.js";
 
 for (const name in components) {
   Vue.component(name, components[name]);
 }
 
-Vue.prototype.$global = new Vue({ data: { state: {} } });
+import FContentEditor3 from "./components/FContentEditor3.js";
+Vue.component("FContentEditor3", FContentEditor3);
+
+// Experimental states
+
+import { useStore } from "./hooks/useStore.js";
+
+const states = useStore({}, "fachwerk_document");
+
+const load = key => {
+  return states.value.hasOwnProperty(key) ? states.value[key] : 0;
+};
+
+const save = (key, value) => {
+  states.value = { ...states.value, [key]: value };
+};
+
+Vue.mixin({ methods: { save, load } });
 
 new Vue({
   setup() {
-    const { editorNode, content } = useMonaco(
-      "<f-scene grid>\n  <f-circle/>\n</f-scene>"
-    );
-    return { editorNode, content };
+    const content = ref("haaa");
+    return { content };
   },
   template: `
-  <div style="display: flex; height: 100vh;">
-      <div ref="editorNode" style="flex: 1;" />
-      <f-content style="flex: 1;" :content="content" />
-  </div>
+    <f-fetch src="./index.md" v-slot="{ value: content }">
+      <f-content-editor3 :content="content" />
+    </f-fetch>
   `
 }).$mount("#app");
