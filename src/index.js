@@ -54,9 +54,10 @@ new Vue({
     // We set up current editor content
 
     const initalContent = "<f-scene>\n  <f-circle />\n</f-scene>";
+
     const content = ref(initalContent);
 
-    // We also set up a parallel content store for local storage
+    // We also set up a second content store for local storage
 
     const storedContent = useStore(content.value, "fachwerk_content");
 
