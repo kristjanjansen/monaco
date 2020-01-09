@@ -91,13 +91,14 @@ const FContentEditor3 = {
 
     editorContent.value = storedContent.value;
 
-    // watch(
-    //   () => props.content,
-    //   content => {
-    //     content.value = content;
-    //     storedContent.value = content;
-    //   }
-    // );
+    watch(
+      () => props.content,
+      content => {
+        editorContent.value = content;
+        storedContent.value = content;
+      },
+      { lazy: true }
+    );
 
     // When saving is triggered, we update the stored content with
     // current editor content
@@ -135,8 +136,17 @@ const FContentEditor3 = {
     };
   },
   template: `
-  <div style="display: flex; height: 100vh; --paleblue: #1e1e1e">
-      <div style="flex: 1; display: flex; flex-direction: column; background: var(--paleblue); color: white;">
+  <div style="display: flex; height: 100vh; --paleblue: #1e1e1e; ">
+      <div style="
+        flex: 1;
+        display: flex;
+        flex-direction: column;
+        background: var(--paleblue);
+        color: white;
+        height: 100vh;
+        position: sticky;
+        top: 0;
+      ">
         <div style="
           height: var(--base6);
           padding: 0 var(--base);
@@ -169,9 +179,12 @@ Vue.component("FContentEditor3", FContentEditor3);
 
 new Vue({
   setup() {
-    const initial = "haaa";
-    //setTimeout(() => (initial.value = "baaa"), 2000);
-    return { initial };
+    const content = ref("haaa");
+    return { content };
   },
-  template: `<f-content-editor3 :content="initial" />`
+  template: `
+    <f-fetch src="./index.md" v-slot="{ value: content }">
+      <f-content-editor3 :content="content" />
+    </f-fetch>
+  `
 }).$mount("#app");
