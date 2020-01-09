@@ -1,4 +1,9 @@
-const { default: compositionApi, ref, computed } = window.vueCompositionApi;
+const {
+  default: compositionApi,
+  ref,
+  computed,
+  watch
+} = window.vueCompositionApi;
 Vue.use(compositionApi);
 
 import { components } from "https://designstem.github.io/fachwerk/fachwerk.js";
@@ -43,6 +48,20 @@ const FEditorHeader = {
 };
 
 Vue.component("FEditorHeader", FEditorHeader);
+
+const FSmallToggle = {
+  props: { value: { default: false }, title: { default: "" } },
+  setup(props, { emit }) {
+    const enabled = ref(props.value);
+    watch(() => emit("input", enabled.value));
+    return { enabled };
+  },
+  template: `
+  <a class="quaternary" @click="enabled = !enabled">{{ enabled ? '🚀' : '🚴‍♀️' }} {{ title }}</a>
+`
+};
+
+Vue.component("FSmallToggle", FSmallToggle);
 
 new Vue({
   components: {
@@ -90,7 +109,14 @@ new Vue({
     const isSaved = computed(() => storedContent.value == content.value);
     const isResetable = computed(() => content.value !== initalContent);
 
-    return { a, monacoEditor, content, onSave, onReset, isSaved, isResetable };
+    return {
+      monacoEditor,
+      content,
+      onSave,
+      onReset,
+      isSaved,
+      isResetable
+    };
   },
   template: `
   <div style="display: flex; height: 100vh; --paleblue: #1e1e1e">
@@ -103,7 +129,12 @@ new Vue({
           align-items: center;
           justify-content: space-between;
         ">
-          <f-toggle v-model="monacoEditor" title="Pro mode" />
+          <a
+            class="quaternary"
+            @click="$global.$emit('edit')"
+            title="Close editor"
+          ><f-close-icon /></a>
+          <f-small-toggle v-model="monacoEditor" title="Mode" />
           <div>
             <a v-if="isResetable" class="quaternary" @click="onReset" style="opacity: 0.5">Reset</a>
             <a class="quaternary" @click="onSave">{{ isSaved ? 'Saved' : 'Save'}}</a>
