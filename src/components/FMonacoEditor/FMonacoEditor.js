@@ -11,14 +11,11 @@ self.MonacoEnvironment = {
     return "../monaco/editor.worker.js";
   }
 };
-//import { useMonaco } from "./useMonaco.js";
 
 export default {
   props: { value: { default: "" } },
   setup(props, { emit }) {
-    //const { editorNode, editorContent } = useMonaco(props.content);
     const editorNode = ref(null);
-    //const editorContent = ref(content);
 
     onMounted(() => {
       // We import the editor with dynamic import
@@ -85,21 +82,3 @@ export default {
     <div ref="editorNode" />
   `
 };
-
-/*
-const { watch } = window.vueCompositionApi;
-
-import { useMonaco } from "./useMonaco.js";
-
-export default {
-  props: { content: { default: "" } },
-  setup(props, { emit }) {
-    const { editorNode, editorContent } = useMonaco(props.content);
-    // watch(() => editorContent, () => emit("value", editorContent));
-    return { editorNode };
-  },
-  template: `
-    <div ref="editorNode" />
-  `
-};
-*/
