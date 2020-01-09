@@ -21,11 +21,18 @@ export default {
     //const editorContent = ref(content);
 
     onMounted(() => {
+      // We import the editor with dynamic import
+
       importMonaco.then(monaco => {
+        // Setting up autcomplete and hover providets
+
         monaco.languages.registerCompletionItemProvider("html", {
           provideCompletionItems
         });
         monaco.languages.registerHoverProvider("html", { provideHover });
+
+        // Setting up editor
+
         const editor = monaco.editor.create(editorNode.value, {
           value: "",
           language: "html",
@@ -40,23 +47,35 @@ export default {
         const model = editor.getModel();
         model.updateOptions({ tabSize: 2 });
 
-        watch(
-          () => props.value,
-          value =>
-            model.pushEditOperations(
-              [],
-              [
-                {
-                  range: model.getFullModelRange(),
-                  text: value
-                }
-              ]
-            ) //editor.setValue(value)
-        );
+        // When editor content changes
+        // we emit input event so the component
+        // works with v-model
 
         editor.onDidChangeModelContent(e => {
           emit("input", editor.getValue());
         });
+
+        // We only change editor content
+        // when value prop is really different
+        // from what we emitted for v-model
+        // otherwise we get the recursive loop
+
+        watch(
+          () => props.value,
+          value => {
+            if (value !== editor.getValue()) {
+              model.pushEditOperations(
+                [],
+                [
+                  {
+                    range: model.getFullModelRange(),
+                    text: value
+                  }
+                ]
+              );
+            }
+          }
+        );
       });
     });
 

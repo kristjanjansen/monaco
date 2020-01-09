@@ -15,6 +15,7 @@ Vue.prototype.$global = new Vue({ data: { state: {} } });
 new Vue({
   setup() {
     const content = ref("<f-scene>\n  <f-circle />\n</f-scene>");
+    setTimeout(() => (content.value = "babababa"), 3000);
     return { content };
   },
   template: `
