@@ -25,7 +25,21 @@ Vue.use(compositionApi);
 //   return localValue;
 // };
 
-const store = ref({});
+// const store = ref({});
+
+// const load = key => {
+//   return store.value.hasOwnProperty(key) ? store.value[key] : 0;
+// };
+
+// const save = (key, value) => {
+//   store.value = { ...store.value, [key]: value };
+// };
+
+// export { load, save };
+
+import { useStore } from "./useStore.js";
+
+const store = useStore({}, "fachwerk_state");
 
 const load = key => {
   return store.value.hasOwnProperty(key) ? store.value[key] : 0;
@@ -35,4 +49,4 @@ const save = (key, value) => {
   store.value = { ...store.value, [key]: value };
 };
 
-export { store, load, save };
+export { load, save };

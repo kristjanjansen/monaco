@@ -32,29 +32,31 @@ import { load, save } from "./hooks/useStore2.js";
 
 Vue.mixin({ methods: { save, load } });
 
-const Slider = {
-  setup() {
-    const innerValue = ref(0);
+import Slider from "./components/Slider.js";
 
-    // watch(innerValue, value => {
-    //   state.value = { ...state.value, a: value };
-    // });
+// const Slider = {
+//   setup() {
+//     const innerValue = ref(0);
 
-    // watch(state, value => {
-    //   innerValue.value = value.a;
-    // });
-    return { load, save };
-  },
-  template: `
-    <div><input
-      step="0.0001"
-      max="360"
-      type="range"
-      :value="load('a')"
-      @input="e => save('a',parseFloat(e.target.value))"
-    /> {{ load('a') }}</div>
-  `
-};
+//     // watch(innerValue, value => {
+//     //   state.value = { ...state.value, a: value };
+//     // });
+
+//     // watch(state, value => {
+//     //   innerValue.value = value.a;
+//     // });
+//     return { load, save };
+//   },
+//   template: `
+//     <div><input
+//       step="0.0001"
+//       max="360"
+//       type="range"
+//       :value="load('a')"
+//       @input="e => save('a',parseFloat(e.target.value))"
+//     /> {{ load('a') }}</div>
+//   `
+// };
 
 Vue.component("Slider", Slider);
 
