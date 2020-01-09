@@ -60,8 +60,7 @@ new Vue({
 
     const storedContent = useStore(content.value, "fachwerk_content");
 
-    // storedContent returns either content saved in previous session
-    // or current content value
+    // storedContent returns content saved in previous session, if exists
 
     content.value = storedContent.value;
 
@@ -83,6 +82,9 @@ new Vue({
       content.value = initalContent;
       storedContent.value = initalContent;
     };
+
+    // Checking whenever content has been saved can be done by comparing
+    // the editor content and stored content
 
     const isSaved = computed(() => storedContent.value == content.value);
 
