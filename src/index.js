@@ -68,7 +68,10 @@ new Vue({
     FMonacoEditor: () => import("./components/FMonacoEditor/FMonacoEditor.js")
   },
   setup() {
-    const monacoEditor = useStore(false, "fachwerk_editor");
+    const editorType = useStore(false, "fachwerk_editor_type");
+
+    const editorOpen = useStore(true, "fachwerk_editor_open");
+    // $global.$emit('edit')
 
     // We set up current editor content
 
@@ -78,7 +81,7 @@ new Vue({
 
     // We also set up a second content store for local storage
 
-    const storedContent = useStore(content.value, "fachwerk_content");
+    const storedContent = useStore(content.value, "fachwerk_editor_content");
 
     // storedContent returns content saved in previous session, if exists
 
@@ -110,7 +113,8 @@ new Vue({
     const isResetable = computed(() => content.value !== initalContent);
 
     return {
-      monacoEditor,
+      editorType,
+      editorOpen,
       content,
       onSave,
       onReset,
@@ -131,17 +135,18 @@ new Vue({
         ">
           <a
             class="quaternary"
-            @click="$global.$emit('edit')"
-            title="Close editor"
-          ><f-close-icon /></a>
-          <f-small-toggle v-model="monacoEditor" title="Mode" />
+            @click="editorOpen = !editorOpen"
+          >
+            <f-close-icon />
+          </a>
+          <f-small-toggle v-model="editorType" title="Mode" />
           <div>
             <a v-if="isResetable" class="quaternary" @click="onReset" style="opacity: 0.5">Reset</a>
             <a class="quaternary" @click="onSave">{{ isSaved ? 'Saved' : 'Save'}}</a>
           </div>
         </div>
-        <f-monaco-editor v-if="monacoEditor" v-model="content" style="flex: 1;" />
-        <f-editor v-if="!monacoEditor" v-model="content" style="flex: 1; padding-top: calc(var(--base) * 0.25); padding-left: calc(var(--base) * 9);" />
+        <f-monaco-editor v-if="editorOpen && editorType" v-model="content" style="flex: 1;" />
+        <f-editor v-if="editorOpen && !editorType" v-model="content" style="flex: 1; padding-top: calc(var(--base) * 0.25); padding-left: calc(var(--base) * 9);" />
       </div>
       <f-content style="flex: 1;" :content="content" />
   </div>
