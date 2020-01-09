@@ -12,7 +12,19 @@ for (const name in components) {
 //Vue.prototype.$global = new Vue();
 
 import { appState, useState } from "./state.js";
-const a = useState(false, "amma");
+let a = useState({ editor: false, aba: true }, "amma");
+
+const states = useState({}, "states");
+
+const gett = key => {
+  return states.value.hasOwnProperty(key) ? states.value[key] : 0;
+};
+
+const sett = (key, value) => {
+  states.value = { ...states.value, [key]: value };
+};
+
+Vue.mixin({ methods: { gett, sett } });
 
 const FEditorHeader = {
   setup() {
@@ -23,7 +35,9 @@ const FEditorHeader = {
 <div style="background: var(--paleblue); color: white; padding: 10px; display: flex; align-items: top;">
   <f-toggle v-model="monacoEditor" title="Pro mode" />
   {{ a }}
-  <f-toggle v-model="a" title="Pro mode" />
+  <button @click="a = {...a, editor: !a.editor}">a</button>
+  <f-toggle :value="a.editor" @input.native="a = {...a, editor: !a.editor}" title="Pro dode" />
+
 </div>
   `
 };

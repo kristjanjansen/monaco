@@ -5,12 +5,11 @@ export const appState = { monacoEditor: ref(false) };
 
 export const useState = (initialValue = null, key = null) => {
   const value = ref(initialValue);
-  if (key) {
+  if (key && !window.localStorage.getItem(key)) {
     window.localStorage.setItem(key, JSON.stringify(initialValue));
   }
   const localValue = computed({
     get: () => {
-      console.log(value.value);
       let storedValue = null;
       if (key && window.localStorage.getItem(key)) {
         storedValue = JSON.parse(window.localStorage.getItem(key));
