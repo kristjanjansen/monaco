@@ -39,7 +39,8 @@ export default {
           theme: "vs-dark",
           fontSize: "15px",
           wordWrap: "wordWrapColumn",
-          wordWrapColumn: 65,
+          wordWrapColumn: 75,
+          lineNumbers: "off",
           minimap: {
             enabled: false
           }
@@ -85,21 +86,3 @@ export default {
     <div ref="editorNode" />
   `
 };
-
-/*
-const { watch } = window.vueCompositionApi;
-
-import { useMonaco } from "./useMonaco.js";
-
-export default {
-  props: { content: { default: "" } },
-  setup(props, { emit }) {
-    const { editorNode, editorContent } = useMonaco(props.content);
-    // watch(() => editorContent, () => emit("value", editorContent));
-    return { editorNode };
-  },
-  template: `
-    <div ref="editorNode" />
-  `
-};
-*/
