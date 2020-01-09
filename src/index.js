@@ -11,32 +11,30 @@ for (const name in components) {
 
 //Vue.prototype.$global = new Vue();
 
-import { appState } from "./state.js";
+import { appState, useState } from "./state.js";
+const a = useState(false, "amma");
 
 const FEditorHeader = {
   setup() {
     const { monacoEditor } = appState;
-    return { monacoEditor };
+    return { a, monacoEditor };
   },
   template: `
 <div style="background: var(--paleblue); color: white; padding: 10px; display: flex; align-items: top;">
   <f-toggle v-model="monacoEditor" title="Pro mode" />
+  {{ a }}
+  <f-toggle v-model="a" title="Pro mode" />
 </div>
   `
 };
 
 Vue.component("FEditorHeader", FEditorHeader);
 
-import { useState } from "./state.js";
-
 new Vue({
   components: {
     FMonacoEditor: () => import("./components/FMonacoEditor/FMonacoEditor.js")
   },
   setup() {
-    const a = useState(false);
-    console.log(a.value);
-    setTimeout(() => (a.value = true), 1000);
     const { monacoEditor } = appState;
     const content = ref("<f-scene>\n  <f-circle />\n</f-scene>");
     return { a, monacoEditor, content };

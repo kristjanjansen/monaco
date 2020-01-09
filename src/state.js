@@ -10,6 +10,8 @@ export const useState = (initialValue = null, key = null) => {
   }
   const localValue = computed({
     get: () => {
+      console.log(value.value);
+      let storedValue = null;
       if (key && window.localStorage.getItem(key)) {
         storedValue = JSON.parse(window.localStorage.getItem(key));
         return storedValue !== value.value ? storedValue : value.value;
