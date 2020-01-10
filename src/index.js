@@ -15,48 +15,15 @@ for (const name in components) {
 import FContentEditor3 from "./components/FContentEditor3.js";
 Vue.component("FContentEditor3", FContentEditor3);
 
-// Experimental states
+// Experimental store
 
-import { load, save } from "./hooks/useStore2.js";
+import { gett, sett } from "./store.js";
 
-// const state = useStore2;
+Vue.mixin({ methods: { gett, sett } });
 
-// const load = key => {
-//   return state.value.hasOwnProperty(key) ? state.value[key] : 0;
-// };
-
-// const save = (key, value) => {
-//   state.value = { ...state.value, [key]: value };
-//   console.log(state.value.a);
-// };
-
-Vue.mixin({ methods: { save, load } });
+// Experimental slider
 
 import Slider from "./components/Slider.js";
-
-// const Slider = {
-//   setup() {
-//     const innerValue = ref(0);
-
-//     // watch(innerValue, value => {
-//     //   state.value = { ...state.value, a: value };
-//     // });
-
-//     // watch(state, value => {
-//     //   innerValue.value = value.a;
-//     // });
-//     return { load, save };
-//   },
-//   template: `
-//     <div><input
-//       step="0.0001"
-//       max="360"
-//       type="range"
-//       :value="load('a')"
-//       @input="e => save('a',parseFloat(e.target.value))"
-//     /> {{ load('a') }}</div>
-//   `
-// };
 
 Vue.component("Slider", Slider);
 

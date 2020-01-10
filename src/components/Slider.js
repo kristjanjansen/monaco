@@ -1,5 +1,4 @@
 const { ref, watch } = window.vueCompositionApi;
-import { load, save } from "../hooks/useStore2.js";
 
 export default {
   setup() {
@@ -10,8 +9,8 @@ export default {
       step="0.0001"
       max="360"
       type="range"
-      :value="load('a')"
-      @input="e => save('a',parseFloat(e.target.value))"
-    /> {{ load('a') }}</div>
+      :value="gett('a')"
+      @input="e => sett('a',parseFloat(e.target.value))"
+    /> {{ gett('a') }}</div>
   `
 };
