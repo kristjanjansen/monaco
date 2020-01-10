@@ -15,21 +15,17 @@ for (const name in components) {
 import FContentEditor3 from "./components/FContentEditor3.js";
 Vue.component("FContentEditor3", FContentEditor3);
 
-// Experimental states
+// Experimental store
 
-import { useStore } from "./hooks/useStore.js";
+import { gett, sett } from "./store.js";
 
-const states = useStore({}, "fachwerk_document");
+Vue.mixin({ methods: { gett, sett } });
 
-const load = key => {
-  return states.value.hasOwnProperty(key) ? states.value[key] : 0;
-};
+// Experimental slider
 
-const save = (key, value) => {
-  states.value = { ...states.value, [key]: value };
-};
+import Slider from "./components/Slider.js";
 
-Vue.mixin({ methods: { save, load } });
+Vue.component("Slider", Slider);
 
 new Vue({
   setup() {
