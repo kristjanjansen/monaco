@@ -34,7 +34,7 @@ new Vue({
   },
   template: `
     <f-fetch src="./index.md" v-slot="{ value: content }">
-      <f-content-editor3 :content="content" />
+      <f-content-editor3 :content="'hello'" />
     </f-fetch>
   `
 }).$mount("#app");
